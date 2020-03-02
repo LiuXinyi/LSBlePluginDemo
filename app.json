@@ -1,0 +1,21 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/connect/connect",
+    "pages/setting/setting"
+  ],
+  "plugins": {
+    "LSDevicePlugin": {
+      "version": "dev",
+      "provider": "wxcffaa8476ea5be91"
+    }
+  },
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "WeChat",
+    "navigationBarTextStyle": "black"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

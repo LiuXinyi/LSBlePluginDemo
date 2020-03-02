@@ -1,0 +1,28 @@
+<!--pages/scan/scan/device.wxml-->
+<view class='page'>
+  <view class='flex-wrp-row item'>
+    <view class='item-left flex-wrp-row'>
+      <view class='list-right'>
+        <view class='title'>{{deviceName}}[{{deviceMac}}]</view>
+        <view  class='connected-status'>{{statusMsg}}</view>
+      </view>
+    </view>
+    <view wx:if='{{connectState===1}}' bindtap='disconnectDevice'>
+      <button class='connectBtn' loading='{{isConnecting}}' ></button>
+    </view>
+    <view wx:if='{{connectState===0}}' bindtap='connectDevice' class='imageView'>
+      <image class='imageBtn' src='../image/refresh.svg'></image>
+    </view>
+    <view wx:if='{{connectState===2}}' bindtap='disconnectDevice' class='imageView'>
+      <image class='imageBtn' src='../image/disconnect.svg'></image>
+    </view>
+  </view>
+  <view style='height:20rpx; background: #F5F5F5; margin-bottom: 5px;'></view>
+  <view class='settingView'>
+    <button class='connectBtn' bindtap='setup'>设置</button>
+  </view>
+  <scroll-view scroll-y="true" class='logText' enable-flex="true">
+    <text selectable="true"  class="text">{{logText}}</text>
+  </scroll-view>
+
+</view>

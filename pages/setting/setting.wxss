@@ -1,0 +1,31 @@
+
+.page{
+    background: #F5F5F5;
+}
+
+.scan-list {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10rpx;
+}
+
+/** 扫描列表样式 **/
+
+.list-group{
+  display: flex;
+  margin: 16px;
+  /* padding: 18px; */
+}
+
+.list-right{
+  flex:1;
+}
+.title{
+  font-size:14px;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  /* padding-top: 5px; */
+}

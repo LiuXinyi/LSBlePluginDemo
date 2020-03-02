@@ -1,0 +1,19 @@
+<!--pages/scan/device/setting/setting.wxml-->
+<view class='page'>
+<scroll-view class="scan-list" scroll-y="true" enable-flex="true">
+    <view wx:for="{{settings}}" wx:for-item="result" wx:key="unique">
+      <view class='list-group' data-text="{{result}}" bindtap="selectSetting">
+        <!-- name & address layout -->
+        <view class='list-right'>
+          <view class='title'>{{result}}</view>
+        </view>
+      </view>
+      <!-- space -->
+      <view style='wight:100%;height:10rpx;  background: white'></view>
+    </view>
+  </scroll-view>
+
+  <modal hidden="{{showRandomNumInput}}" title="设备绑定" confirm-text="确定"   bindconfirm="confirm" no-cancel="true">
+      <input bindinput='inputRandomNum' type='number' placeholder="请输入设备显示的随机数..." auto-focus/>
+   </modal>
+</view>
