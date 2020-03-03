@@ -18,7 +18,7 @@ Page({
     statusMsg: '',
     isBluetoothEnable: false,
     gattClient: null,
-    logText: '',
+    logText: '日志:',
     dataPackage: null,
     connectState: 0,
     scanResult: null
@@ -50,6 +50,7 @@ Page({
       //注册数据回调监听
       addEventListener('dataChanged',
           (deviceMac, dataType, data, dataStr) => {
+
               self.appendLogText(dataStr);
           })
 

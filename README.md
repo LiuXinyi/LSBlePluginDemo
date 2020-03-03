@@ -2,6 +2,11 @@
 
 ## 1、插件使用说明
 
+####1.0 插件申请
+
+请查看微信小程序插件使用官方文档：https://developers.weixin.qq.com/miniprogram/dev/framework/plugin/using.html
+当前小程序插件appId: wxcffaa8476ea5be91 需要申请并等待通过后方可使用本插件。
+
 #### 1.1 插件声明
 
 在app.json中声明插件的引用及appId:
