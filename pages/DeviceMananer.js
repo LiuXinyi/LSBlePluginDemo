@@ -113,6 +113,11 @@ export function scanDevice(scanOption) {
   return  LSBluetoothPlugin.startScanning(scanCallback, [LSBluetoothPlugin.Profiles.ScanFilter.All]);
 }
 
+/**
+ * 绑定设备，校验和读取设备信息
+ * @param scanResult 搜索到的设备对象
+ * @param callback
+ */
 export function bindDevice(scanResult, callback) {
   LSBluetoothPlugin.stopScanning(() => {});
   LSBluetoothPlugin.stopDataSync('bind device');
@@ -125,16 +130,25 @@ export function bindDevice(scanResult, callback) {
     //绑定操作指令更新回调
     onBindingCommandUpdate(deviceMac, bindCmd, deviceInfo) {
       if (bindCmd === LSBluetoothPlugin.Profiles.BindingCmd.InputRandomNumber) {
+        //需要让用户输入手环上的随机码，然后调用接口#pushSettingsRandomNum,
+        //如果随机码校验成功，则会回调onBindingResults
+        //注意，需要监控pushSettingsRandomNum接口callback,如果失败，则需要让用户重新输入随机码
         callback.onBindingCommandUpdate({deviceMac, code: 1, deviceInfo}) // 1是随机码
+
       } else if (bindCmd === LSBluetoothPlugin.Profiles.BindingCmd.RegisterDeviceID) {
         //deviceInfo
         deviceInfo.mac = deviceMac;
         callback.onBindingCommandUpdate({deviceMac, code: 2, deviceInfo})
+        //这个状态表明秤还未初始化，需要使用deviceInfo去服务端注册该设备，并分配deviceId
+        //然后把分配到的deviceId，调用pushSettingsRegisterId写入秤体，完成初始化。
+        //如果秤已经初始化了(上次写过deviceId)，则直接回调 onBindingResults 绑定成功。
+        //如果需要重置设备还原初始化状态，长按秤体reset键。
       }
     },
     //绑定结果回调
     onBindingResults(deviceInfo, status) {
       if (status) { // 绑定成功
+        //绑定成功会返回deviceInfo，需要把deviceInfo.deviceId和用户在服务端建立绑定关系。
         callback.onBindingResults({deviceInfo, code: 200})
       } else {  // 绑定失败
         callback.onBindingResults({deviceInfo, code: 500})
