@@ -1,5 +1,6 @@
 <!--pages/scan/scan/device.wxml-->
-<view class='page'>
+<view >
+
   <view class='flex-wrp-row item'>
     <view class='item-left flex-wrp-row'>
       <view class='list-right'>
@@ -21,8 +22,10 @@
   <view class='settingView'>
     <button class='connectBtn' bindtap='setup'>设置</button>
   </view>
+
   <scroll-view scroll-y="true" class='logText' enable-flex="true">
-    <text selectable="true"  class="text">{{logText}}</text>
+    日志输出:
+    <text   selectable="true" class="text">{{logText}}</text>
   </scroll-view>
 
 </view>

@@ -18,7 +18,7 @@ Page({
     statusMsg: '',
     isBluetoothEnable: false,
     gattClient: null,
-    logText: '日志:',
+    logText: '',
     dataPackage: null,
     connectState: 0,
     scanResult: null
@@ -78,6 +78,7 @@ Page({
    */
   onShow: function () {
     console.log('onShow.......');
+    this.appendLogText('onShow.......');
 
   },
 
@@ -147,7 +148,9 @@ Page({
       connectState: 1,
       logText: ''
     });
-    this.updateStatusMessage("Connecting...");
+      this.appendLogText('发起请求');
+
+      this.updateStatusMessage("Connecting...");
     let mac = this.data.deviceMac;
     if (mac === null || mac === undefined || mac === '') {
       //重置当前mac
@@ -176,6 +179,7 @@ Page({
     this.setData({
       logText: this.data.logText + '\n' + log + '\n' + '----------------------' + '\n'
     })
+
   },
   // 显示手机当前的蓝牙状态
   showBlueoothStatus: function (enable) {
