@@ -2,7 +2,7 @@
 
 ## 1、插件使用说明
 
-####1.0 插件申请
+#### 1.0 插件申请
 
 请查看微信小程序插件使用官方文档：https://developers.weixin.qq.com/miniprogram/dev/framework/plugin/using.html
 当前小程序插件appId: wxcffaa8476ea5be91 需要申请并等待通过后方可使用本插件。
@@ -606,7 +606,7 @@ lsPlugin.pushSettings(deviceMac, pageSetting, onSettingListener);
 
 ## 6、设备测量数据定格式定义
 
-#### 6.1 手环日常步行数据
+#### 6.1 手环日常步行数据 (0x51)
 ```javascript
 var _stepData = {
   version: 0,
@@ -622,7 +622,7 @@ var _stepData = {
 }
 ```
 
-#### 6.2 普通心率数据
+#### 6.2 普通心率数据(0x53)
 ```javascript
 var _heartRateData = {
   version: 0,
@@ -635,7 +635,7 @@ var _heartRateData = {
 }
 ```
 
-#### 6.3 睡眠数据
+#### 6.3 睡眠数据(0x52)
 ```javascript
 var _sleepData = {
   version: 0,
@@ -649,7 +649,7 @@ var _sleepData = {
 }
 ```
 
-#### 6.4 运动类别
+#### 6.4 运动类别(exerciseData>category)
 
 ```javascript
 export const ExerciseCategory = Object.freeze({
@@ -676,7 +676,7 @@ export const ExerciseCategory = Object.freeze({
 })
 ```
 
-#### 6.5 运动总结数据
+#### 6.5 运动总结数据 (0xE2)
 
 ```javascript
 var _exerciseData ={
@@ -705,7 +705,7 @@ var _exerciseData ={
 }
 ```
 
-#### 6.6 运动心率数据
+#### 6.6 运动心率数据(0x73)
 
 ```javascript
 var _heartRateData = {
@@ -721,7 +721,7 @@ var _heartRateData = {
 }
 ```
 
-#### 6.7 运动卡路里数据
+#### 6.7 运动卡路里数据(0xE6)
 
 ```javascript
 var _caloriesData = {
@@ -737,7 +737,7 @@ var _caloriesData = {
 }
 ```
 
-#### 6.8 运动配速数据
+#### 6.8 运动配速数据(0xE4)
 
 ```javascript
 var _exerciseSpeed = {
@@ -753,7 +753,7 @@ var _exerciseSpeed = {
 }
 ```
 
-#### 6.9 体重测量数据
+#### 6.9 体重测量数据(0x4802)
 
 ```javascript
 var _weightData = {
@@ -770,3 +770,30 @@ var _weightData = {
   realtimeDataStatus:false,//实时测量数据状态
 }
 ```
+#### 6.10 设备端发起运动通知(0xE1)
+
+```javascript
+/**
+ * 运动模式通知数据结构体
+ */
+var _exerciseNotify = {
+  version: 0,
+  cmd: 0,
+  flag: 1, //手机功能检测请求类型，0x01：GPS检测；其他：预留
+  status: 0,//运动状态,0x00：开始；0x01：结束
+  mode:0,  //运动模式 运动类型
+}
+```
+## 7、常见问题
+
+#### 7.1、手环数据存储支持多久，多天没有同步，数据会怎么样
+  理论上是7天内数据
+  步数数据存储的颗粒度是1小时一笔，心率和睡眠是5分钟记录一个数据，最长一笔能记录8小时左右
+  锻炼数据则是运动开始和运动结束算一笔锻炼数据，需要用户主动发起或者智能识别
+#### 7.2、没有提供主动获取设备数据接口
+因为没有必要，现在设备同步数据机制是设备主动上报，通过回调抛到上层
+onDataChanged(deviceMac, dataType, data, dataStr)
+1.当连接成功后，设备会通过回调上报全部缓存的数据。
+2.在连接成功过程中产生的数据，设备会立马上报
+
+
