@@ -69,7 +69,11 @@ let _syncCallback = {
       }
     // 上传数据
     // upload(deviceMap[deviceMac.toUpperCase()], dataType, data);
-  }
+  },
+  onUpdateBluetoothConnectId: function(deviceMac, connectId) {
+    wx.setStorageSync('ConnectId' + deviceMac, connectId);
+  },
+  
 };
 /**
  * 初始化设备管理
@@ -233,8 +237,11 @@ export function stopDeviceSync() {
 }
 
 export function addDevice(device) {
-    deviceMap[device.deviceMac] = device;
-    LSBluetoothPlugin.addDevice(device);
+  let bluetoothConnectId = wx.getStorageSync('ConnectId' + device.deviceMac);
+  device.bluetoothConnectId = bluetoothConnectId;
+  deviceMap[device.deviceMac] = device;
+  
+  LSBluetoothPlugin.addDevice(device);
 }
 
 export function removeDevice(device) {

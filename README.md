@@ -268,9 +268,11 @@ lsPlugin.bindDevice(scanResult, onBindingListener);
 //定义设备信息对象
 let device = {
   deviceSn: '',  //设备SN
-  deviceMac: ''  //设备MAC
-}
+  deviceMac: '',  //设备MAC
+   //@版本1.0.6新增字段
+  bluetoothConnectId:'' // 通过回调onUpdateBluetoothConnectId获取，微信返回的deviceId,在IOS手机，在设备和手机配对情况下，要传这个值，否则可能连接不上 
 
+}
 lsPlugin.addDevice(device);
 ```
    
@@ -298,7 +300,12 @@ let _syncCallback = {
     //dataType 测量数据类型
     //data 测量数据对象
     //dataStr 测量数据简述，字符串形式
-  }
+  },
+  //@版本1.0.6新增 ios connectId(deviceId) 更新 
+  onUpdateBluetoothConnectId(deviceMac, connectId) {
+    console.log('onUpdateBluetoothConnectId:', deviceMac, connectId);  
+    //尽量同步到服务端，addDevice时 赋值到bluetoothConnectId
+  },
 }
 ```
 连接状态定义onConnectionStateChanged#status
@@ -606,7 +613,7 @@ lsPlugin.pushSettings(deviceMac, pageSetting, onSettingListener);
 
 ## 6、设备测量数据定格式定义
 
-#### 6.1 手环日常步行数据 (0x51)
+#### 6.1 手环日常步行数据 (0x51)(0x57)
 ```javascript
 var _stepData = {
   version: 0,
@@ -705,7 +712,7 @@ var _exerciseData ={
 }
 ```
 
-#### 6.6 运动心率数据(0x73)
+#### 6.6 运动心率数据(0x73)(0xE5)
 
 ```javascript
 var _heartRateData = {
@@ -721,7 +728,7 @@ var _heartRateData = {
 }
 ```
 
-#### 6.7 运动卡路里数据(0xE6)
+#### 6.7 运动卡路里数据(0x7F)
 
 ```javascript
 var _caloriesData = {
