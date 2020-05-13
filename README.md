@@ -1,11 +1,9 @@
 # 乐心蓝牙设备小程序插件接入指南
-
+demo地址:https://github.com/liuxinyi/LSBlePluginDemo
 ## 1、插件使用说明
+#### 1.0 插件使用申请
 
-#### 1.0 插件申请
-
-请查看微信小程序插件使用官方文档：https://developers.weixin.qq.com/miniprogram/dev/framework/plugin/using.html
-当前小程序插件appId: wxcffaa8476ea5be91 需要申请并等待通过后方可使用本插件。
+请查看微信小程序插件使用官方文档：https://developers.weixin.qq.com/miniprogram/dev/framework/plugin/using.html 当前小程序插件appId: wxcffaa8476ea5be91 需要申请并等待通过审核后方可使用本插件。
 
 #### 1.1 插件声明
 
@@ -31,16 +29,43 @@ let version = lsPlugin.getVersion();
 
 #### 1.3 插件初始化
 
-建议在app.js的onLaunch方法中初始化插件，避免因系统的差异或系统蓝牙初始化延时，导致的接口功能异常
+建议在app.js的onLaunch方法中初始化插件，避免因系统的差异或系统蓝牙初始化延时，导致的接口功能异常。
+如果需要进行设备数据同步，还需要初始化插件鉴权信息(请看1.4)。
 ```javascript
 const lsPlugin = requirePlugin("LSDevicePlugin")
 
 App({
   onLaunch: function () {
-    lsPlugin.init();
+    lsPlugin.init(res=>{
+              if(res){
+                  console.log('蓝牙插件初始化成功')
+              }
+    })
   }
 })
 ```
+#### 1.4 插件鉴权初始化(v2.0.0及以上版本)
+发送邮件到以下邮箱申请appId。
+
+发送：
+jason.sheng@lifesense.com
+zheng.lu@lifesense.com
+
+抄送：
+zhicheng.liu@lifesense.com
+yong.wu@lifesense.com
+xinyi.liu@lifesense.com
+pengfei.yu@lifesense.com
+chengze.wu@lifesense.com
+
+申请成功后，请通过下面代码初始化鉴权信息
+```javascript
+lsPlugin.initAuthorization({
+     //乐心分配的appId，
+    appId: 'com.leshiguang.saas.rbac.demo.appid'
+  });
+```
+
 
 ## 2、接口定义
 
@@ -93,8 +118,13 @@ lsPlugin.startScanning(scanCallback, filters);
 #### 1.5 stopScanning
   停止蓝牙扫描。
 
-#### 1.6 addDevice
-  添加设备。在调用插件的数据同步接口前，需要先将添加目标设备。支持同时连接多设备。
+#### 1.6 ~~addDevice~~
+  在v2.0.0及以上版本被废弃不能使用，请使用addMeasureDevice代替
+
+#### 1.6.1 addMeasureDevice (v2.0.0及以上版本)
+  添加设备,在调用插件的数据同步接口前，需要先将添加目标设备。支持同时连接多设备。
+  
+    注意，必须先初始化鉴权信息，方可使用此接口(请看插件鉴权初始化)
 
 #### 1.7 removeDevice
   删除设备。设备删除后，插件会断开其已连接的蓝牙连接，同时将该设备从缓存的设备列表里清空。再次连接需要重新添加设备。
@@ -157,7 +187,7 @@ export function startDeviceSync() {
 import wxLogger from "./log.js"
 
 lsPlugin.setLogInterface(wxLogger);
-....
+
 
 // log.js内容如下
 
@@ -256,9 +286,10 @@ lsPlugin.bindDevice(scanResult, onBindingListener);
 
 ## 4、设备数据同步流程说明
 
-* 设备测量数据同步，需要App将目标设备的deviceSN、或设备MAC、或设备信息添加到插件中。设备添加成功后，App可以通过startDataSync接口启动测量数据自动同步服务。同步服务启动后，插件自动处理扫描、连接、断连后的重连等，直至App通过调用接口stopDataSync，将同步服务关闭。
-* 在数据同步过程中，App可以通过接口removeDevice，将设备从插件的缓存列表里删除。设备删除后，连接会断开。若App需要再次连接该设备，需要重新调用设备添加接口，重新把设备添加到插件中，重新开启数据同步服务。
-* 对于设备信息的获取，App可以通过SN号从服务端查询，或直接通过蓝牙搜索，从扫描结果解析相关的设备信息。
+* 设备测量数据同步，需要App将目标设备的设备MAC、或设备信息添加到插件中。设备添加成功后，App可以通过startDataSync接口启动测量数据自动同步服务。同步服务启动后，插件自动处理扫描、连接、数据同步等，直至App通过调用接口stopDataSync，将同步服务关闭。
+* 调用过startDataSync，在一个连接周期还未连接上设备，或者曾经连接成功过设备，但是因为其他原因导致断开了连接，触发重连请使用startConnectDevice。
+* 在数据同步过程中，可以通过接口removeDevice，将设备从插件的缓存列表里删除。设备删除后，连接会断开。若App需要再次连接该设备，需要重新调用设备添加接口，重新把设备添加到插件中，重新开启数据同步服务。
+* 对于设备信息的获取，可以通过绑定关系从服务端查询，或直接通过蓝牙搜索，从扫描结果解析相关的设备信息。
 
 #### 4.1 添加设备
   
@@ -267,14 +298,35 @@ lsPlugin.bindDevice(scanResult, onBindingListener);
 ```javascript
 //定义设备信息对象
 let device = {
-  deviceSn: '',  //设备SN
-  deviceMac: '',  //设备MAC
-   //@版本1.0.6新增字段
-  bluetoothConnectId:'' // 通过回调onUpdateBluetoothConnectId获取，微信返回的deviceId,在IOS手机，在设备和手机配对情况下，要传这个值，否则可能连接不上 
-
-}
-lsPlugin.addDevice(device);
+  deviceSn: '',  //设备SN，非必须
+  model:'',//设备型号，非必须
+  deviceMac: '', //设备MAC  必须
+  bluetoothConnectId:'' // 通过回调onUpdateBluetoothConnectId获取，微信返回的deviceId,在IOS手机，在设备和手机配对情况下，必传这个值，否则可能连接不上 
+};
+//2.0.0及以上版本
+lsPlugin.addMeasureDevice(device, (res) => {
+    if (res.code === 200) {
+      console.log("addMeasureDevice succeed",res)
+    } else { 
+     //添加设备失败，请根据res.msg联系我们
+      console.log('addMeasureDevice fail', res);
+      wx.showToast({
+        title: res.msg, icon: 'none',
+      });
+    }
+  });
 ```
+添加设备失败错误对照
+
+| 状态码(code) | msg |  注释  |
+| :--- | :---: | :--- |
+| -1 | 本地异常 | 其他异常场景，比如未initAuthorization |
+| 20003 | no license for this model | 未购买此型号授权 |
+| 20004 | run out of license | 授权已用完 |
+| 20005 | INVALID_SERVICE | 无效的服务&版本 |
+| 20006 | INVALID_DEVICE | 设备未认证 |
+| 20007 | INVALID_APPID | 无效的appid |
+
    
 #### 4.2 注册数据同步回调
 
@@ -301,10 +353,10 @@ let _syncCallback = {
     //data 测量数据对象
     //dataStr 测量数据简述，字符串形式
   },
-  //@版本1.0.6新增 ios connectId(deviceId) 更新 
+  //ios connectId(deviceId) 更新
   onUpdateBluetoothConnectId(deviceMac, connectId) {
     console.log('onUpdateBluetoothConnectId:', deviceMac, connectId);  
-    //尽量同步到服务端，addDevice时 赋值到bluetoothConnectId
+    //尽量同步到服务端，addDevice时 赋值给bluetoothConnectId
   },
 }
 ```
@@ -613,7 +665,7 @@ lsPlugin.pushSettings(deviceMac, pageSetting, onSettingListener);
 
 ## 6、设备测量数据定格式定义
 
-#### 6.1 手环日常步行数据 (0x51)(0x57)
+#### 6.1 手环日常步行数据
 ```javascript
 var _stepData = {
   version: 0,
@@ -629,7 +681,7 @@ var _stepData = {
 }
 ```
 
-#### 6.2 普通心率数据(0x53)
+#### 6.2 普通心率数据
 ```javascript
 var _heartRateData = {
   version: 0,
@@ -642,7 +694,7 @@ var _heartRateData = {
 }
 ```
 
-#### 6.3 睡眠数据(0x52)
+#### 6.3 睡眠数据
 ```javascript
 var _sleepData = {
   version: 0,
@@ -656,7 +708,7 @@ var _sleepData = {
 }
 ```
 
-#### 6.4 运动类别(exerciseData>category)
+#### 6.4 运动类别
 
 ```javascript
 export const ExerciseCategory = Object.freeze({
@@ -683,7 +735,7 @@ export const ExerciseCategory = Object.freeze({
 })
 ```
 
-#### 6.5 运动总结数据 (0xE2)
+#### 6.5 运动总结数据
 
 ```javascript
 var _exerciseData ={
@@ -712,7 +764,7 @@ var _exerciseData ={
 }
 ```
 
-#### 6.6 运动心率数据(0x73)(0xE5)
+#### 6.6 运动心率数据
 
 ```javascript
 var _heartRateData = {
@@ -728,7 +780,7 @@ var _heartRateData = {
 }
 ```
 
-#### 6.7 运动卡路里数据(0x7F)
+#### 6.7 运动卡路里数据
 
 ```javascript
 var _caloriesData = {
@@ -744,7 +796,7 @@ var _caloriesData = {
 }
 ```
 
-#### 6.8 运动配速数据(0xE4)
+#### 6.8 运动配速数据
 
 ```javascript
 var _exerciseSpeed = {
@@ -760,7 +812,7 @@ var _exerciseSpeed = {
 }
 ```
 
-#### 6.9 体重测量数据(0x4802)
+#### 6.9 体重测量数据
 
 ```javascript
 var _weightData = {
@@ -777,30 +829,3 @@ var _weightData = {
   realtimeDataStatus:false,//实时测量数据状态
 }
 ```
-#### 6.10 设备端发起运动通知(0xE1)
-
-```javascript
-/**
- * 运动模式通知数据结构体
- */
-var _exerciseNotify = {
-  version: 0,
-  cmd: 0,
-  flag: 1, //手机功能检测请求类型，0x01：GPS检测；其他：预留
-  status: 0,//运动状态,0x00：开始；0x01：结束
-  mode:0,  //运动模式 运动类型
-}
-```
-## 7、常见问题
-
-#### 7.1、手环数据存储支持多久，多天没有同步，数据会怎么样
-  理论上是7天内数据
-  步数数据存储的颗粒度是1小时一笔，心率和睡眠是5分钟记录一个数据，最长一笔能记录8小时左右
-  锻炼数据则是运动开始和运动结束算一笔锻炼数据，需要用户主动发起或者智能识别
-#### 7.2、没有提供主动获取设备数据接口
-因为没有必要，现在设备同步数据机制是设备主动上报，通过回调抛到上层
-onDataChanged(deviceMac, dataType, data, dataStr)
-1.当连接成功后，设备会通过回调上报全部缓存的数据。
-2.在连接成功过程中产生的数据，设备会立马上报
-
-

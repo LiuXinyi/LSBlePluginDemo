@@ -79,14 +79,23 @@ let _syncCallback = {
  * 初始化设备管理
  */
 export function initManager(callback) {
+  console.log('初始化插件，版本>', LSBluetoothPlugin.getVersion());
+
   LSBluetoothPlugin.init(callback);
   LSBluetoothPlugin.setLogInterface(wx.getLogManager());
+  //初始化授权信息
+  LSBluetoothPlugin.initAuthorization({
+    appId: 'com.leshiguang.saas.rbac.demo.appid',//乐心分配给平台的appId
+  });
+  
+  
   if (_bluetoothStateListener.indexOf(_bluetoothRebootRestartSyncListener) === -1) {
     _bluetoothStateListener.push(_bluetoothRebootRestartSyncListener)
   }
     LSBluetoothPlugin.registerBluetoothStateListener([], (res) => {
         _bluetoothStateListener.forEach(listener => listener &&  listener(res))
     });
+  
 }
 
 /**
@@ -239,9 +248,17 @@ export function stopDeviceSync() {
 export function addDevice(device) {
   let bluetoothConnectId = wx.getStorageSync('ConnectId' + device.deviceMac);
   device.bluetoothConnectId = bluetoothConnectId;
-  deviceMap[device.deviceMac] = device;
-  
-  LSBluetoothPlugin.addDevice(device);
+  LSBluetoothPlugin.addMeasureDevice(device, (res) => {
+    if (res.code === 200) {
+      console.log("addMeasureDevice succeed",res)
+      deviceMap[device.deviceMac] = device;
+    } else {
+      console.log('addMeasureDevice fail', res);
+      wx.showToast({
+        title: res.msg||'添加设备失败', icon: 'none',
+      });
+    }
+  });
 }
 
 export function removeDevice(device) {

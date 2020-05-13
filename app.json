@@ -6,7 +6,7 @@
   ],
   "plugins": {
     "LSDevicePlugin": {
-      "version": "dev-e34c8958a224da6fd4655629134e56d8",
+      "version": "2.0.0",
       "provider": "wxcffaa8476ea5be91"
     }
   },
