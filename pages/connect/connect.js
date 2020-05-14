@@ -157,7 +157,18 @@ Page({
       mac = this.data.connectId;
       this.setData({deviceMac: mac})
     }
-    addDevice({deviceName: this.data.deviceName, deviceMac: mac});
+    addDevice({deviceName: this.data.deviceName, deviceMac: mac},(succeed,msg)=>{
+      if (!succeed) {
+        wx.showModal({
+          title:"添加设备失败",
+          showCancel: false,
+          content: msg,
+          success: () => {
+            wx.navigateBack();
+          },
+        });
+      }
+    });
     //注册数据同步回调
     startDeviceSync();
   },
@@ -171,7 +182,7 @@ Page({
     this.updateStatusMessage("Disconnect");
     let mac = this.data.deviceMac;
     removeDevice({deviceMac: mac})
-      stopDeviceSync();
+    stopDeviceSync();
   },
 
   // 打印信息

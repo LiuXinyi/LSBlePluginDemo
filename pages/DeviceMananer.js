@@ -245,28 +245,38 @@ export function stopDeviceSync() {
 
 }
 
-export function addDevice(device) {
+export function addDevice(device,callback) {
   let bluetoothConnectId = wx.getStorageSync('ConnectId' + device.deviceMac);
   device.bluetoothConnectId = bluetoothConnectId;
   LSBluetoothPlugin.addMeasureDevice(device, (res) => {
     if (res.code === 200) {
       console.log("addMeasureDevice succeed",res)
       deviceMap[device.deviceMac] = device;
+      callback && callback(true, '');
     } else {
       console.log('addMeasureDevice fail', res);
       wx.showToast({
-        title: res.msg||'添加设备失败', icon: 'none',
+        title: res.msg || '添加设备失败', icon: 'none',
       });
+      if (callback) {
+        callback(false, res.msg);
+      }
+
     }
   });
 }
 
 export function removeDevice(device) {
-    try {
-        delete deviceMap[device.deviceMac];
-    } catch (e) {
-    }
-    LSBluetoothPlugin.removeDevice(device)
+  try {
+    delete deviceMap[device.deviceMac];
+    
+  } catch (e) {
+  }
+  try {
+    LSBluetoothPlugin.removeDevice(device);
+  } catch (e) {
+  }
+
 }
 
 export function getDeviceMap() {
