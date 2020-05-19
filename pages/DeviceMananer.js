@@ -253,9 +253,9 @@ export function addDevice(device,callback) {
       callback && callback(true, '');
     } else {
       console.log('addMeasureDevice fail', res);
-      wx.showToast({
-        title: res.msg || '添加设备失败', icon: 'none',
-      });
+      // wx.showToast({
+      //   title: res.msg || '添加设备失败', icon: 'none',
+      // });
       if (callback) {
         callback(false, res.msg);
       }

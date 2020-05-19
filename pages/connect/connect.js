@@ -159,10 +159,14 @@ Page({
     }
     addDevice({deviceName: this.data.deviceName, deviceMac: mac},(succeed,msg)=>{
       if (!succeed) {
+        let tips = msg;
+        if (typeof msg === 'object') {
+          tips = JSON.stringify(msg);
+        }
         wx.showModal({
           title:"添加设备失败",
           showCancel: false,
-          content: msg,
+          content: tips,
           success: () => {
             wx.navigateBack();
           },
