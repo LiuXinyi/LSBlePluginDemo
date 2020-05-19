@@ -13,7 +13,7 @@ demo地址:https://github.com/liuxinyi/LSBlePluginDemo
   "plugins": {
     "LSDevicePlugin": {
     	"version": "{{最新版本}}",
-    	"provider": "wxcffaa8476ea5be91"
+    	"provider": "wx43b1ab446b5db1e0"
     }
   }
 }

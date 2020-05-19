@@ -87,8 +87,6 @@ export function initManager(callback) {
   LSBluetoothPlugin.initAuthorization({
     appId: 'com.leshiguang.saas.rbac.demo.appid',//乐心分配给平台的appId
   });
-  
-  
   if (_bluetoothStateListener.indexOf(_bluetoothRebootRestartSyncListener) === -1) {
     _bluetoothStateListener.push(_bluetoothRebootRestartSyncListener)
   }
@@ -202,7 +200,7 @@ export function pushSettingsRandomNum(deviceMac, randomNum, onSettingListener) {
 }
 
 /**
- * 绑定设备过程中（互联蓝牙秤），写入设备ID
+ * 绑定设备过程中（互联蓝牙秤），写入设备ID(可以使用mac做为deviceId)
  * @param deviceMac
  * @param deviceId
  * @param onSettingListener
