@@ -167,10 +167,13 @@ Page({
             wx.navigateBack();
           },
         });
+      }else{
+         //注册数据同步回调
+        startDeviceSync();
       }
+      
     });
-    //注册数据同步回调
-    startDeviceSync();
+   
   },
 
   //断开连接
