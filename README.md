@@ -1,5 +1,14 @@
 # 乐心蓝牙设备小程序插件接入指南
 demo地址:https://github.com/liuxinyi/LSBlePluginDemo
+
+
+## 0、升级管理
+ #### 2.0.2(npm1.0.17)
+  修改Logger的Array.prototype.insert导致其他插件兼容问题出问题 
+  优化在IOS手机下openBluetoothAdapter报错，导致一些状态判断问题
+  增加startDataSync时，如果蓝牙状态不可用（系统报错），增加信息读取蓝牙状态逻辑
+  修复调用startDataSync，当设备列表为空时，managerStatus状态出错。
+
 ## 1、插件使用说明
 #### 1.0 插件使用申请
 
@@ -349,14 +358,14 @@ let _syncCallback = {
   //设备测量数据回调
   onDataChanged(deviceMac, dataType, data, dataStr) {
     //deviceMac 设备MAC
-    //dataType 测量数据类型
+    //dataType 测量数据类型 数据类型查看第6节
     //data 测量数据对象
     //dataStr 测量数据简述，字符串形式
   },
   //ios connectId(deviceId) 更新
   onUpdateBluetoothConnectId(deviceMac, connectId) {
     console.log('onUpdateBluetoothConnectId:', deviceMac, connectId);  
-    //尽量同步到服务端，addDevice时 赋值给bluetoothConnectId
+    //尽量同步到服务端，addMeasureDevice时 赋值给bluetoothConnectId
   },
 }
 ```
@@ -664,8 +673,10 @@ lsPlugin.pushSettings(deviceMac, pageSetting, onSettingListener);
 ```
 
 ## 6、设备测量数据定格式定义
+  
 
-#### 6.1 手环日常步行数据
+
+#### 6.1 手环日常步行数据 dataType=（0x51 0x57）
 ```javascript
 var _stepData = {
   version: 0,
@@ -681,7 +692,7 @@ var _stepData = {
 }
 ```
 
-#### 6.2 普通心率数据
+#### 6.2 普通心率数据 dataType=（0x53）
 ```javascript
 var _heartRateData = {
   version: 0,
@@ -694,7 +705,7 @@ var _heartRateData = {
 }
 ```
 
-#### 6.3 睡眠数据
+#### 6.3 睡眠数据 dataType=(0x52)
 ```javascript
 var _sleepData = {
   version: 0,
@@ -735,7 +746,7 @@ export const ExerciseCategory = Object.freeze({
 })
 ```
 
-#### 6.5 运动总结数据
+#### 6.5 运动总结数据 dataType=（0xE2）
 
 ```javascript
 var _exerciseData ={
@@ -764,7 +775,7 @@ var _exerciseData ={
 }
 ```
 
-#### 6.6 运动心率数据
+#### 6.6 运动心率数据 dataType=（0xE5 0x73）
 
 ```javascript
 var _heartRateData = {
@@ -780,7 +791,7 @@ var _heartRateData = {
 }
 ```
 
-#### 6.7 运动卡路里数据
+#### 6.7 运动卡路里数据 dataType=（0xE6 0x7F）
 
 ```javascript
 var _caloriesData = {
@@ -796,7 +807,7 @@ var _caloriesData = {
 }
 ```
 
-#### 6.8 运动配速数据
+#### 6.8 运动配速数据 dataType=（0xE4）
 
 ```javascript
 var _exerciseSpeed = {
@@ -812,7 +823,7 @@ var _exerciseSpeed = {
 }
 ```
 
-#### 6.9 体重测量数据
+#### 6.9 体重测量数据  dataType=（0x4802）
 
 ```javascript
 var _weightData = {
