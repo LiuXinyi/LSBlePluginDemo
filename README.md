@@ -57,7 +57,7 @@ App({
 发送邮件到以下邮箱申请appId。
 
 发送：
-jason.sheng@lifesense.com
+zhihui.xiao@lifesense.com
 zheng.lu@lifesense.com
 
 抄送：
@@ -70,7 +70,7 @@ chengze.wu@lifesense.com
 申请成功后，请通过下面代码初始化鉴权信息
 ```javascript
 lsPlugin.initAuthorization({
-     //乐心分配的appId，
+     //用邮件乐心分配的appId替换掉下面字符串
     appId: 'com.leshiguang.saas.rbac.demo.appid'
   });
 ```
