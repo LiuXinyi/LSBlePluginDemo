@@ -92,6 +92,7 @@ Page({
    let ret= scanDevice({
       broadcastNames: null,
       callback: (device) => {
+        console.log("scanResults#",device.id,device.deviceName,device.broadcastId,device.isSystemPaired);
         let broadcastId = device.broadcastId;
         let deviceName = device.deviceName;
         let scanResults= that.data.scanResults;
@@ -101,7 +102,7 @@ Page({
           scanResults.push({
             name: deviceName,
             broadcastId: broadcastId,
-            connectId: device.isSystemPaired ? device.id : broadcastId
+            connectId: device.isSystemPaired ?  broadcastId : device.id 
           });
           that.setData({scanResults,deviceIds})
           //更新扫描结果提示
@@ -145,6 +146,7 @@ Page({
 
   //蓝牙状态改变监听
   registerBlueAdapterStatusChanage: function () {
+    var that  = self;
     addEventListener('bluetoothStateChange',(res) => {
       that.showBlueoothStatus(isBluetoothAvailable());
     });

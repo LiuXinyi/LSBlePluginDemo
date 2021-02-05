@@ -64,7 +64,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    console.log("onload", JSON.stringify(options))
+    console.log("setting.pages -> onload", JSON.stringify(options))
     let obj = JSON.parse(JSON.stringify(options));
     this.setData({
       deviceMac: obj.broadcastId,
@@ -353,8 +353,12 @@ Page({
       broadcastId: this.data.deviceMac,
       id: this.data.connectId
     }
-    //建立绑定连接
-    LSBluetoothPlugin.bindDevice(obj, onBindingListener);
+    //延时3秒
+    setTimeout(function(){
+      //建立绑定连接
+      LSBluetoothPlugin.bindDevice(obj, onBindingListener);
+    },3000)
+    
   },
 
   /**
