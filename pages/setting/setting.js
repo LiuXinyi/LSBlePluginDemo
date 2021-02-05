@@ -133,7 +133,7 @@ Page({
             showRandomNumInput: false
           })
         }
-        else if (bindCmd === LSBluetoothPlugin.Profiles.BindingCmd.RegisterdeviceMac) {
+        else if (bindCmd === LSBluetoothPlugin.Profiles.BindingCmd.RegisterDeviceID) {
           //注册设备ID
           let id = deviceMac;//mac.replace(/:/g, '')
           let idSetting = new LSBluetoothPlugin.SettingProfile.RegisterIdSetting(id);
